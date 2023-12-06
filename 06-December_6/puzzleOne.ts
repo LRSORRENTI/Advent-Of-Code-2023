@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Define a custom type for an array of numbers
 type NumberArray = number[];
@@ -12,14 +12,14 @@ interface ParsedData {
 // Function to parse the data from the file
 const parseData = (filePath: string): ParsedData => {
     const data = fs.readFileSync(filePath, 'utf-8').split('\r\n');
-    const times: NumberArray = data[0].split(":")[1].trim().replace(/\s\s+/g, ' ').split(" ").map(e => +e);
-    const distances: NumberArray = data[1].split(":")[1].trim().replace(/\s\s+/g, ' ').split(" ").map(e => +e);
+    const times: NumberArray = data[0].split(":")[1].trim().replace(/\s\s+/g, ' ').split(" ").map((e: string | number) => +e);
+    const distances: NumberArray = data[1].split(":")[1].trim().replace(/\s\s+/g, ' ').split(" ").map((e: string | number) => +e);
 
     return { times, distances };
 };
 
 // Read and parse the data
-const { times, distances } = parseData('./input.txt');
+const { times, distances } = parseData('./data.txt');
 
 let result = 1;
 
