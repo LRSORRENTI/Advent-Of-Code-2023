@@ -78,4 +78,21 @@ const puzzleOne = (input: string): number => {
   return numberOfPossibleArrangements;
 };
 
+const puzzleTwo = (input: string): number => {
+  const conditionRecords: ConditionRecord[] = parseData(input).map(({ condition, dataPattern }) => ({
+    condition: Array(5).fill(condition).join("?"),
+    dataPattern: Array(5).fill(dataPattern).flat()
+  }));
+
+  let numberOfPossibleArrangements: number = 0;
+  for (const { condition, dataPattern } of conditionRecords) {
+    const arrangements: number = trackTotalPossibleArrangements(condition, dataPattern);
+    numberOfPossibleArrangements += arrangements;
+  }
+  console.log(numberOfPossibleArrangements);
+  return numberOfPossibleArrangements;
+};
+
+
 puzzleOne(input);
+puzzleTwo(input);
