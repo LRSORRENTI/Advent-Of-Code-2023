@@ -1,5 +1,4 @@
-import fs from 'fs';
-
+import * as fs from 'fs';
 // Define a custom type for DataPattern
 type DataPattern = number[];
 
