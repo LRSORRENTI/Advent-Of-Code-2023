@@ -1,4 +1,4 @@
-// import Heap from 'heap-js'
+import Heap from '../node_modules/heap-js'
 import fs from 'fs';
 
 const readInputFile = (filePath: string): string => {

@@ -11,5 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.10.4"
+  },
+  "dependencies": {
+    "heap-js": "^2.3.0"
   }
 }
