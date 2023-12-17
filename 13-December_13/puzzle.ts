@@ -1,5 +1,5 @@
 // Importing the file system module from Node.js to read files.
-import * as fs from "fs";
+// import * as fs from "fs";
 
 // Define a type 'Pattern', which is an array of strings. This represents a group of text lines.
 type Pattern = string[];
