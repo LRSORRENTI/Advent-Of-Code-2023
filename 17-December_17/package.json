@@ -1,0 +1,15 @@
+{
+  "name": "17-december_17",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "heap-js": "^2.3.0"
+  }
+}
