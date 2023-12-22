@@ -87,7 +87,7 @@ class Machine {
   }
 
 //   The constructor for Machine. It initializes the map of nodes and sets the initial pulses values to zero.
-.
+
   constructor(public map: Map<string, Node>) {
     this.pulses = { low: 0, high: 0 }
   }
