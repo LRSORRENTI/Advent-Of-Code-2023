@@ -1,53 +1,80 @@
-const fs = require('fs')
-// Define a type for coordinates (x, y)
-type Coordinates = [number, number];
+import fs from 'fs'
+import { init } from 'z3-solver';
 
-// Define an interface for the input data
-interface InputData {
-    position: Coordinates;
-    velocity: Coordinates;
-}
-
-// Read and parse the input file
-const parseInputFile = (filePath: string): InputData[] => {
-    const inputText = fs.readFileSync(filePath, 'utf-8').trim();
-    return inputText.split('\n').map((line: string) => {
-        const [positionPart, velocityPart] = line.split('@');
-        const position = positionPart.split(',').map((i: string) => Number(i.trim())) as Coordinates;
-        const velocity = velocityPart.split(',').map((i: string) => Number(i.trim())) as Coordinates;
-        return { position, velocity };
-    });
-}
-
-const input = parseInputFile('input.txt');
-
-// Function to test intersection
-const testIntersection = (i: number, j: number, min: number, max: number): boolean => {
-    const { position: p1, velocity: v1 } = input[i];
-    const { position: p2, velocity: v2 } = input[j];
-
-    const m1 = v1[1] / v1[0];
-    const m2 = v2[1] / v2[0];
-    const x = (m1 * p1[0] - m2 * p2[0] + p2[1] - p1[1]) / (m1 - m2);
-    const y = m1 * (x - p1[0]) + p1[1];
-
-    const tA = (x - p1[0]) / v1[0];
-    const tB = (x - p2[0]) / v2[0];
-
-    const inFuture = tA > 0 && tB > 0;
-    const inArea = x >= min && x <= max && y >= min && y <= max;
-
-    return inArea && inFuture;
-}
-
-// Part one
-let sumPartOne = 0;
-let start: number = 1;
-for (let i = 0; i < input.length - 1; ++i) {
-    for (let j: number = start; j < input.length; ++j) {
-        sumPartOne += testIntersection(i, j, 200000000000000, 400000000000000) ? 1 : 0;
+function partOne(lines, MINXY, MAXXY) {
+  let pos = [];
+  let vel = [];
+  for (let line of lines) {
+    let parts = line.split(" @ ");
+    pos.push(parts[0].split(", ").map(Number));
+    vel.push(parts[1].split(", ").map(Number));
+  }
+  
+  let total = 0;
+  for (let j = 0; j < pos.length; j++) {
+    let p1 = pos[j];
+    let v1 = vel[j];
+    for (let i = 0; i < j; i++) {
+      let p0 = pos[i];
+      let v0 = vel[i];
+      if (v0[1] * v1[0] !== v0[0] * v1[1]) {
+        let x = ((p1[1] - p0[1]) + p0[0] * (v0[1] / v0[0]) - p1[0] * (v1[1] / v1[0])) / ((v0[1] / v0[0]) - (v1[1] / v1[0]));
+        let t0 = (x - p0[0])/ v0[0];
+        if (t0 >= 0) {
+          let t1 = (x - p1[0])/ v1[0];
+          if (t1 >= 0) {
+            let y = p0[1] + t0 * v0[1];
+            let coll = [x, y];
+            if (coll[0] >= MINXY && coll[0] <= MAXXY && coll[1] >= MINXY && coll[1] <= MAXXY) {
+              total++;
+            }
+          }
+        }
+      }
     }
-    ++start;
+  }
+  console.log('  ',total);
 }
-console.log('Solution to part one:', sumPartOne);
 
+async function partTwo(lines) {
+  let pos = [];
+  let vel = [];
+  for (let line of lines) {
+      line = line.trim();
+      let [p, v] = line.split(" @ ");
+      pos.push(p.split(", ").map(Number));
+      vel.push(v.split(", ").map(Number));
+  }
+
+  const { Context } = await init();
+  const { Solver, Int} = new Context('main');
+  const x = Int.const('x');
+  const y = Int.const('y');
+  const z = Int.const('z');
+  const vx = Int.const('vx');
+  const vy = Int.const('vy');
+  const vz = Int.const('vz');
+  const solver = new Solver();
+
+  for (let i = 0; i < pos.length; i++) {
+      let [x_i, y_i, z_i] = pos[i];
+      let [vx_i, vy_i, vz_i] = vel[i];
+      let t_i = Int.const(`t_${i}`);
+
+      solver.add(t_i.mul(vx_i).add(x_i).sub(x).sub(t_i.mul(vx)).eq(0));
+      solver.add(t_i.mul(vy_i).add(y_i).sub(y).sub(t_i.mul(vy)).eq(0));
+      solver.add(t_i.mul(vz_i).add(z_i).sub(z).sub(t_i.mul(vz)).eq(0));
+
+      if(i > 3) break;
+  }
+  await solver.check();
+  console.log('  ', Number(solver.model().eval(x.add(y).add(z)).value()));
+}
+
+// const sample = fs.readFileSync('sample.txt', 'utf8').split('\n');
+const input = fs.readFileSync('input.txt', 'utf8').split('\n');
+// console.log('Sample: ');
+// partOne(sample, 7, 27);
+console.log('Input: ');
+partOne(input, 200000000000000, 400000000000000);
+partTwo(input).catch(console.error);
