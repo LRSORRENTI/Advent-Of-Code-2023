@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { init } from 'z3-solver';
 
-function partOne(lines, MINXY, MAXXY) {
+function partOne(lines: string[], MINXY: any, MAXXY: any) {
   let pos = [];
   let vel = [];
   for (let line of lines) {
@@ -36,7 +36,7 @@ function partOne(lines, MINXY, MAXXY) {
   console.log('  ',total);
 }
 
-async function partTwo(lines) {
+async function partTwo(lines: string[]) {
   let pos = [];
   let vel = [];
   for (let line of lines) {
