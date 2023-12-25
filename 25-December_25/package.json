@@ -1,0 +1,14 @@
+{
+    "module": "puzzle.ts",
+    "type": "module",
+    "devDependencies": {
+        "@types/lodash": "^4.14.202",
+        "ts-node": "^10.9.2"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "lodash": "^4.17.21"
+    }
+}
